@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto ">
+<div class="max-w-7xl mx-auto">
   <div class="flex justify-between items-center mb-8">
     <div>
       <h1 class="text-4xl font-bold text-gray-800">Commandes Fournisseurs</h1>
@@ -82,9 +82,8 @@
   </div>
 
   <!-- Pagination -->
-  <div class="flex justify-center mt-6 w-full mb-5">
-    <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination" *ngIf="totalPages > 1">
-
+  <div class="flex justify-center mt-6 w-full mb-5" *ngIf="totalPages > 1">
+    <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
       <button (click)="goToPage(page - 1)" [disabled]="page === 1"
               class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
         &laquo;
@@ -92,7 +91,7 @@
 
       <button *ngFor="let p of pageNumbers"
               (click)="goToPage(p)"
-              [ngClass]="{'bg-blue-600 text-white': p === page,'bg-white text-gray-700 hover:bg-gray-800': p !== page}"
+              [ngClass]="{'bg-blue-600 text-white': p === page,'bg-white text-gray-700 hover:bg-gray-100': p !== page}"
               class="px-4 py-2 border border-gray-300">
         {{ p }}
       </button>
@@ -101,7 +100,6 @@
               class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
         &raquo;
       </button>
-
     </nav>
   </div>
 

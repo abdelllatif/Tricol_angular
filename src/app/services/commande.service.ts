@@ -10,15 +10,16 @@ import { PagedResponse } from '../models/paged-response';
   providedIn: 'root'
 })
 export class CommandeService {
-  private apiUrl = 'http://localhost:8080/commandes'; // change backend URL
+  private apiUrl = 'http://localhost:8080/commandes';
 
   constructor(private http: HttpClient) {}
 
-  getPagedCommandes(page: number, size: number, search: string = ''): Observable<PagedResponse<Commande>> {
+  getPagedCommandes(page: number, size: number, search: string = '', statut: string = ''): Observable<PagedResponse<Commande>> {
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', size.toString());
     if (search) params = params.set('search', search);
+    if (statut) params = params.set('statut', statut);
 
     return this.http.get<PagedResponse<Commande>>(`${this.apiUrl}/page`, { params });
   }
@@ -37,6 +38,9 @@ export class CommandeService {
 
   updateCommande(id: number, commande: Commande): Observable<Commande> {
     return this.http.put<Commande>(`${this.apiUrl}/${id}`, commande);
+  }
+  getCommandeById(id: number): Observable<Commande> {
+    return this.http.get<Commande>(`${this.apiUrl}/${id}`);
   }
 
   deleteCommande(id: number): Observable<void> {

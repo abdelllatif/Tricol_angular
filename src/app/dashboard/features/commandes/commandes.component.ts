@@ -19,7 +19,11 @@ export class CommandesComponent implements OnInit {
   totalPages = 1;
   totalElements = 0;
   currentPage = 1;
+  page = 1;
   pageSize = 10;
+  pageSizes = [5, 10, 20, 50];
+  pageNumbers: number[] = [];
+
   searchTerm = '';
   statutFilter = '';
   loading = false;
@@ -53,6 +57,27 @@ export class CommandesComponent implements OnInit {
     this.fetchCommandes();
   }
 
+  onFilterStatut(statut: string): void {
+    this.statutFilter = statut;
+    this.currentPage = 1;
+    this.fetchCommandes();
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+    this.fetchCommandes();
+  }
+
+  updatePageNumbers(): void {
+    this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  goToPage(p: number): void {
+    if (p < 1 || p > this.totalPages) return;
+    this.currentPage = p;
+    this.page = p;
+    this.fetchCommandes();
+  }
 
   fetchCommandes(): void {
     this.loading = true;
@@ -63,27 +88,17 @@ export class CommandesComponent implements OnInit {
           this.totalPages = res.totalPages;
           this.totalElements = res.totalElements;
           this.currentPage = res.number + 1;
+          this.page = this.currentPage;
           this.pageSize = res.size;
           this.sumTotal = this.commandes.reduce((sum, c) => sum + (c?.montantTotal ?? 0), 0);
+          this.updatePageNumbers();
           this.loading = false;
         },
         error: _ => { this.loading = false; }
       });
   }
 
-
-  onFilterStatut(statut: string): void {
-    this.statutFilter = statut;
-    this.currentPage = 1;
-    this.fetchCommandes();
-  }
-
-
-  // Pagination methods stay same...
-  prevPage(): void { if (this.currentPage > 1) { this.currentPage--; this.fetchCommandes(); } }
-  nextPage(): void { if (this.currentPage < this.totalPages) { this.currentPage++; this.fetchCommandes(); } }
-
-  // Modal methods stay same...
+  // Modal methods
   openCreateModal(): void { this.modalCommandeId = null; this.showModal = true; }
   openEditModal(id: number): void { this.modalCommandeId = id; this.showModal = true; }
   closeModal(refresh = false): void { this.showModal = false; if (refresh) this.fetchCommandes(); }
