@@ -1,0 +1,111 @@
+<div class="home-wrapper bg-gray-50">
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="hero-bg">
+      <img src="assets/images/slide1.png" alt="Tricol" class="hero-img " onerror="this.src='src/assets/images/slide1.png'">
+      <div class="overlay"></div>
+    </div>
+    <div class="hero-content container ">
+      <h1 class="fade-in-up"><span class="highlight text-7xl">Uniformes Professionnels</span><br><h1 class="text-3xl">Conçus pour la Performance</h1></h1>
+      <p class="fade-in-up delay-1 text-2xl">Qualité premium • Confort durable • Sécurité certifiée</p>
+      <div class="hero-cta fade-in-up delay-2">
+      <a routerLink="/catalogue" class="btn-primary pulse h-20 w-auto">Voir le Catalogue</a>
+      <a routerLink="/about" class="btn-secondary">À propos</a>
+    </div>
+    </div>
+    <div class="scroll-indicator"><span></span></div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section py-32 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="section-header fade-in text-center mb-20">
+        <h2 class="text-6xl font-black text-gray-900">Pourquoi Tricol excelle</h2>
+        <p class="mt-6 text-2xl text-gray-600">Des uniformes pensés pour les pros, par des pros.</p>
+      </div>
+      <div class="features-grid grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="feature-card scale-in p-12 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-50 to-indigo-100 hover:shadow-blue-500/30 transition"
+             *ngFor="let f of features; let i = index" [style.--delay]="i">
+          <div class="icon-wrapper w-28 h-28 mx-auto mb-8 relative">
+            <div class="icon-bg absolute inset-0 bg-blue-600 rounded-full blur-2xl opacity-40"></div>
+            <div class="relative text-6xl text-blue-700" [innerHTML]="f.icon"></div>
+          </div>
+          <h3 class="text-3xl font-bold text-center">{{ f.title }}</h3>
+          <p class="mt-6 text-lg text-center text-gray-700">{{ f.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section class="catalog-preview py-32 bg-gray-50">
+    <div class="container mx-auto px-6">
+      <div class="section-header fade-in text-center mb-16">
+        <h2 class="text-6xl font-black">Explorez par métier</h2>
+        <p class="mt-6 text-2xl text-gray-600">Choisissez votre secteur, découvrez vos uniformes.</p>
+      </div>
+      <div class="filter-tabs flex flex-wrap justify-center gap-6 mb-16">
+        <button *ngFor="let cat of categories"
+                (click)="activeCat = cat"
+                [class.active]="activeCat === cat"
+                class="px-10 py-4 rounded-full text-lg font-bold transition {{ activeCat === cat ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 shadow-lg' }}">
+          {{ cat }}
+        </button>
+      </div>
+      <div class="catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="product-card fade-in rounded-3xl overflow-hidden shadow-2xl hover:shadow-blue-500/30 transition"
+             *ngFor="let p of products; let i = index" [style.--delay]="i">
+          <img [src]="p.img" [alt]="p.name" class="w-full h-64 object-cover"
+               onerror="this.src='https://via.placeholder.com/400x300/1a56db/ffffff?text=' + encodeURIComponent(p.name)">
+          <div class="badge absolute top-6 left-6 px-5 py-2 rounded-full text-white font-bold" [style.background]="p.color">
+            {{ p.badge }}
+          </div>
+          <div class="p-8 bg-white">
+            <h4 class="text-2xl font-bold">{{ p.name }}</h4>
+            <p class="text-gray-600 mt-2 text-lg">{{ p.sector }}</p>
+            <a routerLink="#" class="mt-6 inline-block text-blue-600 font-bold text-lg hover:underline">Voir →</a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-20">
+        <a routerLink="#" class="btn-primary large px-16 py-6 text-2xl pulse">Tout le catalogue</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT + CTA -->
+  <section class="about-short py-32 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="about-grid grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div class="about-text fade-in-left">
+          <h2 class="text-6xl font-black">Tricol, l’expert de l’uniforme pro</h2>
+          <p class="mt-8 text-xl text-gray-700 leading-relaxed">Depuis plus de 15 ans, nous équipons les entreprises avec des vêtements techniques, durables et stylés.</p>
+          <ul class="checklist mt-10 space-y-6 text-xl">
+            <li class="flex items-center"><span class="text-green-600 text-3xl mr-4">✓</span> Certifié ISO 9001 & Oeko-Tex</li>
+            <li class="flex items-center"><span class="text-green-600 text-3xl mr-4">✓</span> Production locale à Casablanca</li>
+            <li class="flex items-center"><span class="text-green-600 text-3xl mr-4">✓</span> Personnalisation sur mesure</li>
+          </ul>
+          <a routerLink="#" class="mt-12 inline-block px-12 py-5 bg-gray-900 text-white rounded-full text-xl font-bold hover:bg-black transition">En savoir plus</a>
+        </div>
+        <div class="about-img fade-in-right">
+          <img
+            src="assets/images/Vetement.png"
+            alt="Factory"
+            class="filter drop-shadow-4xl transition-transform duration-300 hover:scale-105"
+            onerror="this.src='https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&w=800&q=80'"
+          >
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final py-32 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="fade-in text-6xl font-black">Prêt à booster l’image de votre équipe ?</h2>
+      <p class="fade-in delay-1 text-3xl mt-8">Demandez un devis gratuit en 2 minutes.</p>
+      <a routerLink="/login" class="mt-12 inline-block btn-primary large pulse px-20 py-8 text-3xl">Commencer maintenant</a>
+    </div>
+  </section>
+</div>

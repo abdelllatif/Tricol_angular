@@ -1,0 +1,98 @@
+<div class="max-w-7xl mx-auto p-6">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Gestion des Produits</h1>
+      <p class="text-gray-600">{{ totalElements }} produits | Stock total: {{ totalStock }} unités</p>
+    </div>
+    <button (click)="openModal(null, 'create')" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 flex items-center">
+      <i class="fas fa-plus mr-2"></i> Nouveau produit
+    </button>
+  </div>
+
+  <div class="mb-6">
+    <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Rechercher par nom, référence..."
+           class="w-full px-6 py-4 rounded-xl border border-gray-300 focus:border-blue-600 focus:outline-none text-lg">
+  </div>
+  <!-- Page Size Selector -->
+  <div class="flex items-center gap-2">
+    <label for="pageSize" class="font-medium text-lg">Afficher :</label>
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()"
+            class="border rounded px-3 py-2">
+      <option *ngFor="let size of pageSizes" [value]="size">{{size}}</option>
+    </select>
+    <span>fournisseurs par page</span>
+  </div>
+  <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl mb-6">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="text-center py-16">
+    <div class="animate-spin inline-block w-12 h-12 border-4 border-blue-600 rounded-full"></div>
+  </div>
+
+  <div *ngIf="!loading && !errorMessage" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-4 text-left cursor-pointer" (click)="sort('nom')">Nom {{ sortKey==='nom' ? (sortOrder==='asc'?'↑':'↓') : '' }}</th>
+        <th class="px-6 py-4 text-left">Catégorie</th>
+        <th class="px-6 py-4 text-right cursor-pointer" (click)="sort('prixUnitaire')">Prix {{ sortKey==='prixUnitaire' ? (sortOrder==='asc'?'↑':'↓') : '' }}</th>
+        <th class="px-6 py-4 text-right cursor-pointer" (click)="sort('stockActuel')">Stock {{ sortKey==='stockActuel' ? (sortOrder==='asc'?'↑':'↓') : '' }}</th>
+        <th class="px-6 py-4 text-right">CUMP</th>
+        <th class="px-6 py-4 text-center">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let p of produits" class="hover:bg-gray-50 border-b">
+        <td class="px-6 py-5 font-medium">{{ p.nom }}</td>
+        <td class="px-6 py-5">{{ p.categorie?.nom || 'Sans catégorie' }}</td>
+        <td class="px-6 py-5 text-right text-green-600 font-semibold">{{ p.prixUnitaire | currency:'MAD':'symbol':'1.2-2' }}</td>
+        <td class="px-6 py-5 text-right">
+            <span [class.text-red-600]="p.stockActuel < 10" [class.text-green-600]="p.stockActuel >= 50" class="font-semibold">
+              {{ p.stockActuel }}
+            </span>
+        </td>
+        <td class="px-6 py-5 text-right stock-cump">
+          {{ p.stockCUMP?.coutUnitaireCUMP | currency:'MAD':'symbol':'1.2-2' }}
+        </td>
+        <td class="px-6 py-5 text-center space-x-3">
+          <button (click)="openModal(p, 'view')" class="text-blue-600 hover:scale-125"><i class="fas fa-eye"></i></button>
+          <button (click)="openModal(p, 'edit')" class="text-green-600 hover:scale-125"><i class="fas fa-edit"></i></button>
+          <button (click)="openAjustementModal(p)" class="text-purple-600 hover:scale-125"><i class="fas fa-sync-alt"></i></button>
+          <button (click)="deleteProduit(p)" class="text-red-600 hover:scale-125"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <!-- Pagination Controls -->
+    <div class="flex justify-center mt-6 w-full mb-5">
+      <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination" *ngIf="totalPages > 1">
+
+        <!-- Previous Button -->
+        <button (click)="goToPage(page - 1)"
+                [disabled]="page === 1"
+                class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+          &laquo;
+        </button>
+
+        <!-- Page Numbers -->
+        <button *ngFor="let p of pageNumbers"
+                (click)="goToPage(p)"
+                [ngClass]="{'bg-blue-600 text-white': p === page,'bg-white text-gray-700 hover:bg-gray-800': p !== page}" class="px-4 py-2 border border-gray-300">{{ p }}
+        </button>
+
+        <!-- Next Button -->
+        <button (click)="goToPage(page + 1)"
+                [disabled]="page === totalPages"
+                class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+          &raquo;
+        </button>
+
+      </nav>
+    </div>
+  </div>
+
+</div>
+
+<app-produit-modal *ngIf="showModal" [produit]="selectedProduit" [mode]="modalMode" (close)="closeModal()" (save)="saveProduit($event)"></app-produit-modal>
+<app-ajustement-modal *ngIf="showAjustementModal" [produit]="selectedProduit" (close)="closeModal()" (ajuster)="ajusterStock($event)"></app-ajustement-modal>

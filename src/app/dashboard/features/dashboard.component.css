@@ -1,0 +1,6 @@
+.btn-action {
+  @apply p-6 rounded-xl font-medium text-center border-2 border-transparent hover:border-current transition;
+}
+.navbar{
+  display: none;
+}

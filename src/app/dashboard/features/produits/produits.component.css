@@ -1,0 +1,4 @@
+/* Fix pour optional chain inutile */
+.stock-cump {
+  @apply font-semibold text-blue-600;
+}

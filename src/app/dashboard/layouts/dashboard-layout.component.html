@@ -1,0 +1,12 @@
+<div class="flex h-screen bg-gray-50 ">
+  <!-- SIDEBAR (fixed, couvre rien) -->
+  <app-sidebar></app-sidebar>
+
+  <!-- CONTENU PLEIN ÉCRAN -->
+  <div class="flex-1 flex flex-col">
+    <app-header></app-header>
+    <main class="flex-1 overflow-y-auto p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="max-w-7xl mx-auto p-6">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Mouvements de Stock</h1>
+      <p class="text-gray-600">{{ totalElements }} mouvements</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <input
+      [(ngModel)]="produitFilter"
+      (ngModelChange)="applyFilters()"
+      type="number"
+      placeholder="Produit ID"
+      class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200"
+    />
+
+    <input
+      [(ngModel)]="search"
+      (ngModelChange)="applyFilters()"
+      type="text"
+      placeholder="Recherche..."
+      class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200"
+    />
+
+    <button
+      (click)="exportExcel()"
+      class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl"
+    >
+      📦 Exporter Excel
+    </button>
+  </div>
+
+  <!-- Page size -->
+  <div class="flex items-center gap-2 mb-4">
+    <label for="pageSize" class="font-medium text-lg">Afficher :</label>
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="border rounded px-3 py-2">
+      <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+    </select>
+    <span>mouvements par page</span>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl shadow border overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 border-b">
+      <tr>
+        <th class="px-6 py-4 text-left">Date</th>
+        <th class="px-6 py-4 text-left">Produit ID</th>
+        <th class="px-6 py-4 text-left">Type</th>
+        <th class="px-6 py-4 text-right">Quantité</th>
+        <th class="px-6 py-4 text-right">Coût unitaire</th>
+        <th class="px-6 py-4 text-center">Détail</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let m of filteredMouvements" class="hover:bg-gray-50 transition">
+        <td class="px-6 py-4">{{ m.dateMouvement | date:'short' }}</td>
+        <td class="px-6 py-4">{{ m.produitId }}</td>
+        <td class="px-6 py-4" [ngClass]="{
+                'text-green-600': m.typeMouvement==='ENTREE',
+                'text-red-600': m.typeMouvement==='SORTIE',
+                'text-yellow-600': m.typeMouvement==='AJUSTEMENT'
+              }">{{ m.typeMouvement }}</td>
+        <td class="px-6 py-4 text-right">{{ m.quantite }}</td>
+        <td class="px-6 py-4 text-right">{{ m.coutUnitaire | number:'1.2-2' }}</td>
+        <td class="px-6 py-4 text-center">
+          <button *ngIf="m.commandeId && m.typeMouvement==='SORTIE'"
+                  (click)="showMouvementDetails(m)"
+                  class="text-blue-600 hover:underline">
+            Voir Commande
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredMouvements.length===0">
+        <td colspan="6" class="text-center text-gray-500 py-10">Aucun mouvement trouvé.</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-6 w-full mb-5" *ngIf="totalPages > 1">
+      <nav class="inline-flex -space-x-px rounded-md shadow-sm">
+        <button (click)="goToPage(page-1)" [disabled]="page===0"
+                class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+          &laquo;
+        </button>
+
+        <button *ngFor="let p of pageNumbers" (click)="goToPage(p)"
+                [ngClass]="{'bg-blue-600 text-white': p===page,'bg-white text-gray-700 hover:bg-gray-800': p!==page}"
+                class="px-4 py-2 border border-gray-300">
+          {{ p + 1 }}
+        </button>
+
+        <button (click)="goToPage(page+1)" [disabled]="page===totalPages-1"
+                class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+          &raquo;
+        </button>
+      </nav>
+    </div>
+  </div>
+</div>

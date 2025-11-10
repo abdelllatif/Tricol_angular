@@ -1,0 +1,120 @@
+<div class="max-w-7xl mx-auto ">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Commandes Fournisseurs</h1>
+      <p class="text-gray-600">
+        {{ totalElements }} commandes | Total: {{ sumTotal | number:'1.2-2' }} MAD
+      </p>
+    </div>
+    <button (click)="openCreateModal()" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+      <i class="fas fa-plus mr-2"></i> Nouvelle commande
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="flex gap-4 mb-6">
+    <input
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange($event)"
+      placeholder="Rechercher commande..."
+      class="flex-1 px-6 py-4 rounded-xl border focus:border-blue-600">
+    <select [(ngModel)]="statutFilter" (change)="onFilterStatut(statutFilter)" class="px-6 py-4 rounded-xl border focus:border-blue-600">
+      <option value="">Tous statuts</option>
+      <option value="EN_ATTENTE">En attente</option>
+      <option value="VALIDEE">Validée</option>
+      <option value="LIVREE">Livrée</option>
+      <option value="ANNULEE">Annulée</option>
+    </select>
+  </div>
+
+  <div class="flex items-center gap-2 mb-4">
+    <label for="pageSize" class="font-medium text-lg">Afficher :</label>
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="border rounded px-3 py-2">
+      <option *ngFor="let size of pageSizes" [value]="size">{{size}}</option>
+    </select>
+    <span>commandes par page</span>
+  </div>
+
+  <!-- Tableau -->
+  <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-4 text-left">ID</th>
+        <th class="px-6 py-4 text-left">Fournisseur</th>
+        <th class="px-6 py-4 text-right">Montant</th>
+        <th class="px-6 py-4 text-center">Statut</th>
+        <th class="px-6 py-4 text-center">Date</th>
+        <th class="px-6 py-4 text-center">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let commande of commandes" class="hover:bg-gray-50 border-b">
+        <td class="px-6 py-4">{{ commande.id }}</td>
+        <td class="px-6 py-4">{{ commande.fournisseur.societe }}</td>
+        <td class="px-6 py-4 text-right">{{ commande.montantTotal | number:'1.2-2' }}</td>
+        <td class="px-6 py-4 text-center">
+            <span [ngClass]="statusClass(commande.statut)" class="px-3 py-1 rounded-lg text-xs font-semibold inline-block">
+              {{ statusName(commande.statut) }}
+            </span>
+        </td>
+        <td class="px-6 py-4 text-center">{{ commande.dateCommande | date: 'yyyy-MM-dd HH:mm' }}</td>
+        <td class="px-6 py-4 text-center flex justify-center gap-2">
+          <button (click)="openEditModal(commande.id!)" class="text-blue-600 hover:text-blue-800">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button (click)="deleteCommande(commande.id!)" class="text-red-600 hover:text-red-800">
+            <i class="fas fa-trash"></i>
+          </button>
+          <button (click)="openDetailsModal(commande.id!)" class="text-green-600 hover:text-green-800">
+            <i class="fas fa-info-circle"></i>
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="commandes.length === 0 && !loading">
+        <td colspan="6" class="text-center text-gray-500 py-10">Aucune commande trouvée.</td>
+      </tr>
+      <tr *ngIf="loading">
+        <td colspan="6" class="py-10 text-center">Chargement...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-center mt-6 w-full mb-5">
+    <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination" *ngIf="totalPages > 1">
+
+      <button (click)="goToPage(page - 1)" [disabled]="page === 1"
+              class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+        &laquo;
+      </button>
+
+      <button *ngFor="let p of pageNumbers"
+              (click)="goToPage(p)"
+              [ngClass]="{'bg-blue-600 text-white': p === page,'bg-white text-gray-700 hover:bg-gray-800': p !== page}"
+              class="px-4 py-2 border border-gray-300">
+        {{ p }}
+      </button>
+
+      <button (click)="goToPage(page + 1)" [disabled]="page === totalPages"
+              class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+        &raquo;
+      </button>
+
+    </nav>
+  </div>
+
+  <!-- Modals -->
+  <app-commande-modal
+    *ngIf="showModal"
+    [commandeId]="modalCommandeId"
+    (close)="closeModal($event)">
+  </app-commande-modal>
+
+  <app-commande-details
+    *ngIf="showDetailsModal"
+    [commandeId]="selectedCommandeId!"
+    (close)="closeDetailsModal()">
+  </app-commande-details>
+</div>

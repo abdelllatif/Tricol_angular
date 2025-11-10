@@ -1,0 +1,92 @@
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" (click)="close.emit()">
+  <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 max-w-4xl w-full mx-8 overflow-y-auto max-h-screen" (click)="$event.stopPropagation()">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-black">{{ mode === 'view' ? 'Détail' : mode === 'edit' ? 'Modifier' : 'Nouveau' }} Produit</h2>
+      <button (click)="close.emit()" class="text-3xl text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+    </div>
+
+    <form (ngSubmit)="onSave()" class="space-y-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block font-semibold text-gray-700 mb-2">Nom *</label>
+          <input [(ngModel)]="selectedProduit.nom" name="nom" required [readonly]="mode === 'view'"
+                 class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:border-blue-600">
+        </div>
+
+        <div>
+          <label class="block font-bold mb-2">Catégorie *</label>
+
+          <!-- Champ de recherche -->
+          <input type="text"
+                 [(ngModel)]="searchCategorie"
+                 (input)="filterCategories()"
+                 (focus)="showDropdown = true"
+                 placeholder="Rechercher ou sélectionner une catégorie..."
+                 class="w-full px-5 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-600 mb-2"
+                 [disabled]="mode === 'view'">
+
+          <!-- Dropdown -->
+          <div *ngIf="showDropdown && filteredCategories.length > 0"
+               class="absolute z-50 mt-1 w-full bg-white rounded-xl shadow-2xl border border-gray-200 max-h-64 overflow-y-auto">
+            <div *ngFor="let cat of filteredCategories"
+                 (click)="selectCategorie(cat)"
+                 class="px-5 py-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0 flex justify-between">
+              <span class="font-medium">{{ cat.nom }}</span>
+              <span class="text-sm text-gray-500">{{ cat.nombreProduits }} produits</span>
+            </div>
+          </div>
+
+          <!-- Affichage catégorie sélectionnée -->
+          <div *ngIf="selectedProduit.categorie"
+               class="mt-2 p-3 bg-blue-50 rounded-xl border border-blue-200">
+            <strong>✓ {{ selectedProduit.categorie.nom }}</strong>
+            <span class="text-sm text-gray-600">({{ selectedProduit.categorie.nombreProduits }} produits)</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-700 mb-2">Prix de Vente (MAD) *</label>
+          <input [(ngModel)]="selectedProduit.prixUnitaire" name="prixVente" type="number" step="0.01" required [readonly]="mode === 'view'"
+                 class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:border-blue-600">
+        </div>
+
+        <!-- PRIX D'ACHAT SEULEMENT EN CREATE/EDIT -->
+        <div *ngIf="mode !== 'view'">
+          <label class="block font-bold text-green-700 mb-2">
+            Prix d'Achat (Coût) MAD * <span class="text-sm font-normal text-gray-600">(pour CUMP)</span>
+          </label>
+          <input [(ngModel)]="prixAchat" name="prixAchat" type="number" step="0.01" required
+                 class="w-full px-5 py-3 rounded-xl border-2 border-green-300 focus:border-green-600 bg-green-50"
+                 placeholder="Ex: 89.90">
+        </div>
+
+        <!-- AFFICHAGE CUMP EN VIEW -->
+        <div *ngIf="mode === 'view'">
+          <label class="block font-bold text-green-700 mb-2">CUMP (Coût Moyen)</label>
+          <div class="w-full px-5 py-3 rounded-xl bg-green-50 border-2 border-green-300 font-bold text-lg">
+            {{ (selectedProduit.stockCUMP?.coutUnitaireCUMP ?? 0) | currency:'MAD':'symbol':'1.2-2' }}
+          </div>
+        </div>
+
+        <div *ngIf="mode === 'create'">
+          <label class="block font-semibold text-gray-700 mb-2">Stock Initial *</label>
+          <input [(ngModel)]="selectedProduit.stockActuel" name="stockActuel" type="number" required
+                 class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:border-blue-600">
+        </div>
+
+        <div class="col-span-2">
+          <label class="block font-semibold text-gray-700 mb-2">Description</label>
+          <textarea [(ngModel)]="selectedProduit.description" name="description" [readonly]="mode === 'view'"
+                    class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:border-blue-600" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-4 mt-10">
+        <button type="button" (click)="close.emit()" class="px-8 py-3 rounded-xl border border-gray-300 hover:bg-gray-50">Annuler</button>
+        <button type="submit" *ngIf="mode !== 'view'" class="px-8 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+          {{ mode === 'edit' ? 'Mettre à jour' : 'Créer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

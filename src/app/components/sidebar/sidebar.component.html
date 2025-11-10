@@ -1,0 +1,45 @@
+<aside [class.-translate-x-full]="isCollapsed"
+       class=" inset-y-0 left-0 z-50 w-72 h-screen bg-[#1e293b] text-white transition-transform duration-300 lg:translate-x-0">
+
+  <div class="flex flex-col h-full">
+    <!-- Burger + Logo -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-700">
+      <h1 class="text-3xl font-black">TRICOL</h1>
+      <button (click)="toggle()" class="lg:hidden text-2xl">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Menu -->
+    <nav class="flex-1 px-6 py-8 space-y-2">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-tachometer-alt mr-4"></i> Dashboard
+      </a>
+      <a routerLink="/fournisseurs" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-truck mr-4"></i> Fournisseurs
+      </a>
+      <a routerLink="/categories" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-box mr-4"></i> Categories
+      </a>
+      <a routerLink="/produits" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-box mr-4"></i> Produits
+      </a>
+      <a routerLink="/commandes" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-shopping-cart mr-4"></i> Commandes
+      </a>
+      <a routerLink="/stock" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-warehouse mr-4"></i> Stock
+      </a>
+    </nav>
+
+    <!-- Déconnexion -->
+    <div class="p-6 border-t border-gray-700">
+      <button (click)="logout()" class="nav-link text-red-400 hover:text-red-300">
+        <i class="fas fa-sign-out-alt mr-4"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Overlay mobile -->
+<div *ngIf="isCollapsed === false" (click)="toggle()" class="fixed inset-0 bg-black/50 z-40 lg:hidden"></div>

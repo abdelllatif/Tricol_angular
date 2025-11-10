@@ -1,0 +1,38 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+    <button (click)="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+
+    <h2 class="text-2xl font-bold mb-4">Détails de la commande</h2>
+
+    <div *ngIf="loading" class="text-center py-6">Chargement...</div>
+    <div *ngIf="error" class="text-red-600">{{ error }}</div>
+
+    <div *ngIf="commande && !loading">
+      <p><strong>ID :</strong> {{ commande.id }}</p>
+      <p><strong>Fournisseur :</strong> {{ commande.fournisseur.societe }}</p>
+      <p><strong>Date :</strong> {{ commande.dateCommande | date:'yyyy-MM-dd HH:mm' }}</p>
+      <p><strong>Statut :</strong> {{ commande.statut }}</p>
+      <p><strong>Total :</strong> {{ commande.montantTotal | number:'1.2-2' }} MAD</p>
+
+      <h3 class="text-xl font-semibold mt-4 mb-2">Produits</h3>
+      <table class="w-full border text-sm">
+        <thead class="bg-gray-100">
+        <tr>
+          <th class="p-2 text-left">Produit</th>
+          <th class="p-2 text-right">Quantité</th>
+          <th class="p-2 text-right">Prix Unitaire</th>
+          <th class="p-2 text-right">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let cp of commande.produits">
+          <td class="p-2">{{ cp.produit.nom }}</td>
+          <td class="p-2 text-right">{{ cp.quantite }}</td>
+          <td class="p-2 text-right">{{ cp.produit.prixUnitaire | number:'1.2-2' }}</td>
+          <td class="p-2 text-right">{{ (cp.produit.prixUnitaire) * (cp.quantite) | number:'1.2-2' }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
