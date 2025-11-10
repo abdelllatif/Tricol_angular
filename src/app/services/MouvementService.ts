@@ -11,17 +11,18 @@ export class MouvementService {
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 Tous les mouvements (non paginés)
+  // 🔹 Récupérer tous les mouvements
   getAll(): Observable<MouvementStockDTO[]> {
     return this.http.get<MouvementStockDTO[]>(this.apiUrl);
   }
 
-  // 🔹 Pagination + recherche
+  // 🔹 Récupérer les mouvements paginés avec filtres
   getPaged(
     page: number,
     size: number,
     search: string = '',
-    produitId: string = ''
+    produitId: string = '',
+    dateOfFilter: string = ''
   ): Observable<{
     mouvements: MouvementStockDTO[],
     currentPage: number,
@@ -33,11 +34,18 @@ export class MouvementService {
       .set('size', size)
       .set('search', search);
 
-    let url = this.apiUrl + '/page';
+    if (dateOfFilter) {
+      params = params.set('date', dateOfFilter);
+      console.log('📅 Sending date param to backend:', dateOfFilter);
+    }
+
+    let url = `${this.apiUrl}/page`;
     if (produitId) {
       url = `${this.apiUrl}/produit/${produitId}/page`;
-      params = params.delete('search'); // pas de recherche globale pour produit
+      params = params.delete('search'); // pas de recherche globale si produit filtré
     }
+
+    console.log('🌐 Final API call:', url + '?' + params.toString());
 
     return this.http.get<{
       mouvements: MouvementStockDTO[],

@@ -10,5 +10,5 @@ export interface MouvementStockDTO {
   motif?: string;                    // Pour AJUSTEMENT manuel
   coutUnitaire?: number;             // Optionnel (pris du fournisseur ou CUMP)
   commandeId?: number;               // Si lié à une commande fournisseur
-  dateMouvement?: string;
+  dateMouvement?: string | Date;
 }

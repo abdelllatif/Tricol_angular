@@ -8,26 +8,16 @@
 
   <!-- Filters -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <input
-      [(ngModel)]="produitFilter"
-      (ngModelChange)="applyFilters()"
-      type="number"
-      placeholder="Produit ID"
-      class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200"
-    />
+    <input [(ngModel)]="produitFilter" (ngModelChange)="applyFilters()" type="number"
+           placeholder="Produit ID" class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200">
 
-    <input
-      [(ngModel)]="search"
-      (ngModelChange)="applyFilters()"
-      type="text"
-      placeholder="Recherche..."
-      class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200"
-    />
+    <input [(ngModel)]="search" (ngModelChange)="applyFilters()" type="text"
+           placeholder="Recherche..." class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200">
 
-    <button
-      (click)="exportExcel()"
-      class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl"
-    >
+    <input [(ngModel)]="dateOfFilter" (ngModelChange)="applyFilters()" type="date"
+           class="px-6 py-4 rounded-xl border border-gray-300 focus:ring focus:ring-green-200">
+
+    <button (click)="exportExcel()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl">
       📦 Exporter Excel
     </button>
   </div>
@@ -35,10 +25,32 @@
   <!-- Page size -->
   <div class="flex items-center gap-2 mb-4">
     <label for="pageSize" class="font-medium text-lg">Afficher :</label>
-    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="border rounded px-3 py-2">
+    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()"
+            class="border rounded px-3 py-2">
       <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
     </select>
     <span>mouvements par page</span>
+  </div>
+  <!-- Modal détails -->
+  <div *ngIf="detailModalOpen"
+       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white  rounded-xl shadow-lg w-11/12 md:w-1/2 p-6 relative">
+      <h2 class="text-2xl font-bold mb-4 text-black ">Détails du Mouvement</h2>
+
+      <div class="space-y-2 text-black">
+        <p><strong>Date :</strong> {{ selectedMouvement?.dateMouvement | date:'short' }}</p>
+        <p><strong>Produit ID :</strong> {{ selectedMouvement?.produitId }}</p>
+        <p><strong>Type :</strong> {{ selectedMouvement?.typeMouvement }}</p>
+        <p><strong>Quantité :</strong> {{ selectedMouvement?.quantite }}</p>
+        <p><strong>Coût unitaire :</strong> {{ selectedMouvement?.coutUnitaire | number:'1.2-2' }}</p>
+        <p *ngIf="selectedMouvement?.commandeId"><strong>Commande ID :</strong> {{ selectedMouvement?.commandeId }}</p>
+      </div>
+
+      <button (click)="closeDetailsModal()"
+              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200">
+        ✖
+      </button>
+    </div>
   </div>
 
   <!-- Table -->
@@ -71,6 +83,11 @@
                   class="text-blue-600 hover:underline">
             Voir Commande
           </button>
+          <span *ngIf="! (m.commandeId && m.typeMouvement==='SORTIE')"
+                  (click)="showMouvementDetails(m)"
+                  class="text-gray-600 text-lg">
+            -
+          </span>
         </td>
       </tr>
       <tr *ngIf="filteredMouvements.length===0">
